@@ -1,0 +1,74 @@
+# Stage 1: Build the application using Node.js
+FROM node:21-alpine3.17 as build
+WORKDIR /app
+COPY . .
+ENV NODE_OPTIONS=--openssl-legacy-provider
+RUN npm install
+RUN npm update
+RUN npm run build
+
+# Stage 2: Run the application
+FROM node:21-alpine3.17
+WORKDIR /app
+COPY --from=build /app /app
+ENV NODE_OPTIONS=--openssl-legacy-provider
+CMD ["npm", "start"]
+
+# # Stage 1: Build the application using Node.js
+# FROM node:21-alpine3.17 as build
+# WORKDIR /app
+# COPY package*.json ./
+# RUN npm install
+# COPY . .
+# ENV NODE_OPTIONS=--openssl-legacy-provider
+# RUN npm update
+# RUN npm run build
+
+# # Stage 2: Run the application
+# FROM node:21-alpine3.17
+# WORKDIR /app
+# COPY --from=build /app /app
+# ENV NODE_OPTIONS=--openssl-legacy-provider
+# CMD ["npm", "start"]
+
+# # Stage 1: Base image with dependencies
+# FROM node:21-alpine3.17 as base
+
+# # Set environment variables
+# ENV NODE_OPTIONS=--openssl-legacy-provider
+
+# # Create and set the working directory
+# WORKDIR /app
+
+# # Install any necessary dependencies
+# # Assuming that there might be dependencies or packages installed
+# # If the image uses Yarn, include that command
+# # RUN apk add --no-cache yarn
+
+# # Copy package.json and package-lock.json (if using npm)
+# COPY package*.json ./
+# RUN npm install
+
+# # Copy the rest of the application files
+# COPY . .
+
+# # If there was a build step, include it here
+# # In the absence of a specific build command in the history,
+# # you might need to add this if your app requires it.
+# # RUN npm run build
+
+# # Stage 2: Final image with the application
+# FROM node:21-alpine3.17
+
+# # Set environment variables again for the final image
+# ENV NODE_OPTIONS=--openssl-legacy-provider
+
+# # Create and set the working directory
+# WORKDIR /app
+
+# # Copy the built application from the base stage
+# COPY --from=base /app /app
+
+# # Set the command to run the application
+# CMD ["npm", "start"]
+
